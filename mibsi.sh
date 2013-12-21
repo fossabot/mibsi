@@ -1,7 +1,7 @@
 #!/bin/bash
  
 #############################################################
-## Title: Easy Btsync
+## Title: Mibsi (Mindless Bittorrent Sync Installer)
 ## Description: Automatic Bittorrent Sync updater/installer
 ## Version: 0.05a-7
 ## License: ISC
@@ -285,7 +285,7 @@ fi
 main(){
   echo "|======================================|"
   echo "|                                      |"
-  echo "|               EasyBTS                |"
+  echo "|                Mibsi                 |"
   echo "|               v0.05a-7               |"
   echo "|         Released: 12/20/2013         |"
   echo "|     http://easybts.homebutter.com    |"

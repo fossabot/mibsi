@@ -51,25 +51,6 @@ Notify="enable"
 
 
 
-checkDir(){
-  if [ -d ${destDir} ];then #verify if destDir exists
-    checkArc
-               
-  elif [ ! -d ${destDir} ];then #verify if destDir does not exist
-     mkdir -p -v ${destDir}
-   if [ -d ${destDir} ];then #check status of last run command (mkdir)
-     checkArc
-   elif [ ! -d ${destDir} ];then
-       echo "Directory: ${destDir} could not be created!"
-       exit 0;
-   fi
-  
-
-     
- fi
-}
-
-
 checkArc(){    
     ARC=$(getconf LONG_BIT) #get the arcitecture of the machine
     
@@ -295,7 +276,8 @@ fi
 
 }
 
-main(){
+checkDir(){
+
   echo "|======================================|"
   echo "|                                      |"
   echo "|                Mibsi                 |"
@@ -304,29 +286,23 @@ main(){
   echo "|     http://easybts.homebutter.com    |"
   echo "|                                      |"
   echo "|======================================|"
-  
-  if  [ checkDir ];then   #verify if checkDir function exited true  
-    checkArc
-      
-    
-  elif [ ! checkDir ];then #verify if checkDir function exited false
-    mkdir -p -v ${destDir}
-    checkArc
-    if [ $? -ne 1 ] ; then #check status of last run command (mkdir)
-      echo "Did you run this script as a superuser?"
-      exit 0;
-      
-    else
-      checkArc
-    fi
-    
-    
-  else
-    echo "The directory check did not pass.."
-    exit 0;
-    
-  fi
 
-} 
+
+  if [ -d ${destDir} ];then #verify if destDir exists
+    checkArc
+               
+  elif [ ! -d ${destDir} ];then #verify if destDir does not exist
+     mkdir -p -v ${destDir}
+   if [ -d ${destDir} ];then #check status of last run command (mkdir)
+     checkArc
+   elif [ ! -d ${destDir} ];then
+       echo "Directory: ${destDir} could not be created!"
+       exit 0;
+   fi
+  
+
+     
+ fi
+}
 
 checkDir

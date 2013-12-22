@@ -168,12 +168,12 @@ askOpen(){
 }
 
 KillBts(){
-  
+  btsync_pid=$(pidof btsync)
   #Send any errors to /dev/null | grep pid | extract 1st field using space as
   #dilimiter | take the first line only
-  GetPidOwner=$(ps aux 2> /dev/null | grep ${btsync_pid} | cut -d" " -f1 | head -n1)
-
-  if [ "${GetPidOwner}" != "${USER}" ];then 
+  PIDUID=$(awk '/^Uid:/{print $2}' /proc/${btsync_pid}/status)
+  OUTPIDUID=$(getent passwd "${PIDUID}" | awk -F: '{print $1}')
+  if [ "${OUTPIDUID}" != "${USER}" ];then 
     sudo /bin/kill -s KILL ${btsync_pid}
     echo "Process was killed by superuser"
   

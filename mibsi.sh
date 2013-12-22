@@ -53,13 +53,14 @@ Notify="enable"
 ##############################################
 
 scriptGen(){
-cat <<- _EOF_
-#!/bin/bash
 
-btsync_bin="${destDir}btsync"
+echo "#!/bin/bash" > ${StartScript}
 
 
-start_btsync(){
+echo "btsync_bin="${destDir}"btsync" >> ${StartScript}
+
+
+echo 'start_btsync(){
   btsync_pid=$(pidof btsync)
   
   if [ ${btsync_pid} ];then
@@ -114,7 +115,7 @@ chkbin(){
       start_btsync
     fi
     
-  elif [ ! -f ${btsync_bin};then
+  elif [ ! -f ${btsync_bin} ];then
     notify-send "${btsync_bin} does not exist so cannot start."
     
   fi
@@ -122,10 +123,9 @@ chkbin(){
 
 }
 
-chkbin
-_EOF_
-}
+chkbin' >> ${StartScript}
 
+}
 
 checkArc(){    
     ARC=$(getconf LONG_BIT) #get the arcitecture of the machine
@@ -268,7 +268,7 @@ chkGenScript(){
     echo "${StartScript} already exists!"
     
   else
-    scriptGen > ${StartScript}
+    scriptGen
     if [ -f ${StartScript} ];then
       chmod +x ${StartScript}
       echo "Start/Stop script was created in: ${StartScript}"

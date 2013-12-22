@@ -241,7 +241,7 @@ bacKup(){
     
     if [ -f ${BackupDir}${BackupFile} ];then
       echo
-      echo "Backup file created in: ${BackupDir}${BackupFile}"
+      echo "Created backup file: ${BackupDir}${BackupFile}"
     elif [ ! -f ${BackupDir}${BackupFile} ];then
       echo
       echo "Could not create backup file in: ${BackupDir}"

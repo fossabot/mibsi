@@ -3,10 +3,10 @@
 #############################################################
 ## Title: Mibsi (Mindless Bittorrent Sync Installer)
 ## Description: Automatic Bittorrent Sync updater/installer
-## Version: 0.05a-7
+## Version: 0.05a-8
 ## License: ISC
-## Date: December 20, 2013
-## Time: 05:30 UTC
+## Date: December 22, 2013
+## Time: 12:35 UTC
 ## Author: Mollusk
 ## Email: hookahkitty@gmail.com
 ## Website: http://homebutter.com
@@ -53,16 +53,20 @@ Notify="enable"
 
 checkDir(){
   if [ -d ${destDir} ];then #verify if destDir exists
-    return true;
+    checkArc
                
   elif [ ! -d ${destDir} ];then #verify if destDir does not exist
-    return false;
+     mkdir -p -v ${destDir}
+   if [ -d ${destDir} ];then #check status of last run command (mkdir)
+     checkArc
+   elif [ ! -d ${destDir} ];then
+       echo "Directory: ${destDir} could not be created!"
+       exit 0;
+   fi
   
-  else
-    return false;
-    exit 0;
+
      
-  fi
+ fi
 }
 
 
@@ -96,14 +100,32 @@ checkArc(){
 }
 
 
+rmArchive(){
 
+  echo
+    
+  
+    
+  if [ -f /tmp/stable ];then #check if archive file exists
+    echo -e "Removing /tmp/stable\n"
+    rm /tmp/stable
+  elif [ ! -f /tmp/stable ];then
+    echo "The archive file: /tmp/stable was removed"
+    echo
+      
+  fi
+
+}
 checkFile(){
  
   if [ -f /tmp/stable ];then  #check if downloaded file exists
     echo "Backing up .sync directory to: ${BackupDir}"
     echo
     if [ -d ${destDir}.sync ];then
+      echo
+      echo "Backing up .sync directory to: ${BackupDir}"
       bacKup
+      echo
     else
       echo "No .sync folder found"
       
@@ -111,21 +133,10 @@ checkFile(){
     echo
     echo -e "Extracting archive to: ${destDir}\n"
     tar xvf /tmp/stable -C ${destDir} #extract archive contents to destDir
+    rmArchive
     checkPid #execute function which checks for process ID of btsync
     
-    echo
     
-    echo -e "Removing /tmp/stable\n"
-    rm /tmp/stable
-    
-    if [ -f /tmp/stable ];then #check if archive file exists
-      echo "The archive file: /tmp/stable still exists!"
-    elif [ ! -f /tmp/stable ];then
-      echo "The archive file: /tmp/stable was removed"
-      echo
-      askOpen
-    fi
-    return;
        
   elif [ ! -f /tmp/stable ];then #check if downloaded file does not exist
     echo "The file archive doesn't seem to exist"
@@ -197,7 +208,9 @@ chkBin(){
     if [ -f ${destDir}btsync ];then #check if binary exists
       ${destDir}btsync
       echo
-      echo "done!" && chkNotify
+      echo "done!"
+      askOpen
+      chkNotify
       
     elif [ ! -f ${destDir}btsync ];then #check if binary does not exist 
       echo "${destDir}btsync does not seem to exist!"
@@ -241,7 +254,7 @@ bacKup(){
     
     if [ -f ${BackupDir}${BackupFile} ];then
       echo
-      echo "Created backup file: ${BackupDir}${BackupFile}"
+      echo "Backup file created in: ${BackupDir}${BackupFile}"
     elif [ ! -f ${BackupDir}${BackupFile} ];then
       echo
       echo "Could not create backup file in: ${BackupDir}"
@@ -286,8 +299,8 @@ main(){
   echo "|======================================|"
   echo "|                                      |"
   echo "|                Mibsi                 |"
-  echo "|               v0.05a-7               |"
-  echo "|         Released: 12/20/2013         |"
+  echo "|               v0.05a-8               |"
+  echo "|         Released: 12/22/2013         |"
   echo "|     http://easybts.homebutter.com    |"
   echo "|                                      |"
   echo "|======================================|"
@@ -298,6 +311,7 @@ main(){
     
   elif [ ! checkDir ];then #verify if checkDir function exited false
     mkdir -p -v ${destDir}
+    checkArc
     if [ $? -ne 1 ] ; then #check status of last run command (mkdir)
       echo "Did you run this script as a superuser?"
       exit 0;
@@ -315,4 +329,4 @@ main(){
 
 } 
 
-main
+checkDir

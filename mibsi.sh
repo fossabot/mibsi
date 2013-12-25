@@ -35,7 +35,11 @@ BackupDir="/home/${USER}/.btsync/backup/"
 BackupFile="btsync-backup-$(date +%Y%m%d).tar.gz"
 
 #startup script
-StartScript="/home/${USER}/start_stop-btsync.sh"
+StartScript="/home/${USER}/btsync-toggle.sh"
+
+#whether or not to generate a start script
+#possible values: "enabled", "Disabled"
+MakeStartScript="enabled"
 
 #enable/eisable prompt to open btsync manager after installation
 #useful if you want to run Easy Btsync at boot time.
@@ -263,22 +267,30 @@ KillBts(){
 
 
 chkGenScript(){
-
-  if [ -f ${StartScript} ];then
-    echo "${StartScript} already exists!"
-    
-  else
-    scriptGen
+  if [ "${MakeStartScript}" = "enabled" ];then
     if [ -f ${StartScript} ];then
-      chmod +x ${StartScript}
-      echo "Start/Stop script was created in: ${StartScript}"
-      
+      echo 
+      echo "${StartScript} already exists!"
+    
     else
-      echo "Start/Stop script was not created!"
+      scriptGen
+    
+      if [ -f ${StartScript} ];then
+	chmod +x ${StartScript}
+	echo
+	echo "Start/Stop script was created in: ${StartScript}"
+	notify-send "Start/Stop script was created in: ${StartScript}"
       
+      else
+	echo
+	echo "Start/Stop script was not created!"
+      fi
     fi
+  elif [ "${MakeStartScript}" = "disabled" ];then
+    echo "Generate Start Script: disabled"
+      
+   
   fi
-
 }
 
 chkBin(){    

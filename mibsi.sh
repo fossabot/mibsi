@@ -39,7 +39,7 @@ StartScript="/home/${USER}/btsync-toggle.sh"
 
 #whether or not to generate a start script
 #possible values: "enabled", "Disabled"
-MakeStartScript="enabled"
+MakeStartScript="disabled"
 
 #enable/eisable prompt to open btsync manager after installation
 #useful if you want to run Easy Btsync at boot time.
@@ -392,7 +392,7 @@ checkDir(){
   echo "|                Mibsi                 |"
   echo "|               v0.05a-8               |"
   echo "|         Released: 12/22/2013         |"
-  echo "|     http://easybts.homebutter.com    |"
+  echo "|     http://mibsi.homebutter.com      |"
   echo "|                                      |"
   echo "|======================================|"
 

@@ -38,7 +38,7 @@ StartScript="/home/${USER}/btsync-toggle.sh"
 
 #whether or not to generate a start script
 #possible values: "enabled", "Disabled"
-MakeStartScript="disabled"
+MakeStartScript="enabled"
 
 #enable/eisable prompt to open btsync manager after installation
 #useful if you want to run Easy Btsync at boot time.
@@ -63,22 +63,45 @@ echo "#!/bin/bash" > ${StartScript}
 echo "btsync_bin="${destDir}"btsync" >> ${StartScript}
 
 
-echo 'start_btsync(){
+echo 'chkNotify(){
+  if [ -f /usr/bin/notify-send ];then
+    return true
+    
+  else
+    return false
+    
+  fi
+
+}
+
+
+start_btsync(){
   btsync_pid=$(pidof btsync)
   
   if [ ${btsync_pid} ];then
-    notify-send "BtSync is already running"
+    if [ chkNotify ];then
+      notify-send "BtSync is already running"
+    else
+      echo "BtSync is already running"
+    fi
   
   else
     ${btsync_bin}
     #sleep 4
     btsync_pid=$(pidof btsync)
     if [ ${btsync_pid} ];then
-      notify-send "BtSync was Started on PID: ${btsync_pid}"
+      if [ chkNotify ];then
+        notify-send "BtSync was Started on PID: ${btsync_pid}"
+      else
+        echo "BtSync was Started on PID: ${btsync_pid}"
+      fi
       
     else
-      notify-send "not started"
-      
+      if [ chkNotify ];then
+        notify-send "BtSync not started"
+      else
+        echo "BtSync was not started"
+      fi
     fi
   fi
 
@@ -89,17 +112,22 @@ stop_btsync(){
   
   
   if [ ! ${btsync_pid} ];then
-    notify-send "BtSync is not running"
-    
+    if [ chkNotify ];then
+      notify-send "BtSync is not running"
+    else
+      echo "BtSync is not running"
+    fi
+
   else
     kill -9 ${btsync_pid}
     #sleep 4
     btsync_pid=$(pidof btsync)
     if [ ! ${btsync_pid} ];then
-      notify-send "BtSync was Killed"
-      
-    else
-      notify-send "not killed"
+      if [ chkNotify ];then
+        notify-send "BtSync was Killed"
+      else
+        echo "BtSync was killed"
+      fi
     fi
     
     
@@ -119,12 +147,17 @@ chkbin(){
     fi
     
   elif [ ! -f ${btsync_bin} ];then
-    notify-send "${btsync_bin} does not exist so cannot start."
+    if [ chkNotify ];then
+      notify-send "${btsync_bin} does not exist so cannot start."
+    else
+      echo "${btsync_bin} does not exist so cannot start."
+    fi
     
   fi
 
 
 }
+
 
 chkbin' >> ${StartScript}
 

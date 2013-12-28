@@ -4,14 +4,14 @@
 ###A mindless btsync installer Bash script  
   
     
-[http://mibsi.homebutter.com]Main Site
+Main Site: http://mibsi.homebutter.com
 
 <hr>
 
 
 #Getting the latest stable release  
 To get the latest stable release, copy the following entire command into terminal:
-```shell
+```bash
 wget http://mibsi.homebutter.com/latest/stable/mibsi-latest-stable.tar.gz \  
 && tar xzvf mibsi-latest-stable.tar.gz \  
 && cd mibsi \    

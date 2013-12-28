@@ -32,7 +32,7 @@ Installation Directory: /home/user/.btsync/
 Backup Directory: /home/user/.btsync/backup/  
 Automatic toggle script creation: "disabled"  
 Output directory of toggle script: /home/user/   
-Ask to open web frontend: #enabled"  
+Ask to open web frontend: "enabled"  
 Graphical notifications: "enabled" 
 
 

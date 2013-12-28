@@ -12,7 +12,7 @@ Main Site: http://mibsi.homebutter.com
 #Getting the latest stable release  
 To get the latest stable release, copy the following entire command into terminal:
 ```bash
-wget http://mibsi.homebutter.com/latest/stable/mibsi-latest-stable.tar.gz \  
+wget http://mibsi.homebutter.com/downloads/latest/stable/mibsi-latest-stable.tar.gz \  
 && tar xzvf mibsi-latest-stable.tar.gz \  
 && cd mibsi \    
 chmod +x mibsi.sh \  

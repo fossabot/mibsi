@@ -3,10 +3,9 @@
 #############################################################
 ## Title: Mibsi (Mindless Bittorrent Sync Installer)
 ## Description: Automatic Bittorrent Sync updater/installer
-## Version: 0.05a-8
+## Version: 0.05a-9
 ## License: ISC
-## Date: December 22, 2013
-## Time: 12:35 UTC
+## Date: December 27, 2013
 ## Author: Mollusk
 ## Email: hookahkitty@gmail.com
 ## Website: http://homebutter.com
@@ -390,8 +389,8 @@ checkDir(){
   echo "|======================================|"
   echo "|                                      |"
   echo "|                Mibsi                 |"
-  echo "|               v0.05a-8               |"
-  echo "|         Released: 12/22/2013         |"
+  echo "|               v0.05a-9               |"
+  echo "|         Released: 12/27/2013         |"
   echo "|     http://mibsi.homebutter.com      |"
   echo "|                                      |"
   echo "|======================================|"

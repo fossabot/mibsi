@@ -33,12 +33,15 @@ BackupDir="/home/${USER}/.btsync/backup/"
 #name of final backup archive
 BackupFile="btsync-backup-$(date +%Y%m%d).tar.gz"
 
-#startup script
-StartScript="/home/${USER}/btsync-toggle.sh"
+#filename toggle script
+ToggleScript="btsync-toggle.sh"
 
-#whether or not to generate a start script
-#possible values: "enabled", "Disabled"
-MakeStartScript="enabled"
+#path to create start/stop toggle script
+ToggleScriptDir="/home/${USER}/"
+
+#whether or not to generate a start/stop toggle script
+#possible values: "enable", "disable"
+MakeToggleScript="disable"
 
 #enable/eisable prompt to open btsync manager after installation
 #useful if you want to run Easy Btsync at boot time.
@@ -57,10 +60,10 @@ Notify="enable"
 
 scriptGen(){
 
-echo "#!/bin/bash" > ${StartScript}
+echo "#!/bin/bash" > ${ToggleScriptDir}${ToggleScript}
 
 
-echo "btsync_bin="${destDir}"btsync" >> ${StartScript}
+echo "btsync_bin="${destDir}"btsync" >> ${ToggleScriptDir}${ToggleScript}
 
 
 echo 'start_btsync(){
@@ -153,7 +156,7 @@ chkbin(){
 }
 
 
-chkbin' >> ${StartScript}
+chkbin' >> ${ToggleScriptDir}${ToggleScript}
 
 }
 
@@ -275,10 +278,9 @@ askOpen(){
 
 KillBts(){
   btsync_pid=$(pidof btsync)
-  #Send any errors to /dev/null | grep pid | extract 1st field using space as
-  #dilimiter | take the first line only
   PIDUID=$(awk '/^Uid:/{print $2}' /proc/${btsync_pid}/status)
   OUTPIDUID=$(getent passwd "${PIDUID}" | awk -F: '{print $1}')
+  
   if [ "${OUTPIDUID}" != "${USER}" ];then 
     sudo /bin/kill -s KILL ${btsync_pid}
     echo "Process was killed by superuser"
@@ -291,35 +293,44 @@ KillBts(){
 
 }
 
-
+chkToggledir(){
+  if [ -d ${ToggleScriptDir} ];then
+    chkGenScript
+  else
+    mkdir -p ${ToggleScriptDir}
+    chkGenScript
+  fi
+    
+}
 chkGenScript(){
-  if [ "${MakeStartScript}" = "enabled" ];then
-    if [ -f ${StartScript} ];then
+  if [ "${MakeToggleScript}" = "enable" ];then
+    if [ -f ${ToggleScriptDir}${ToggleScript} ];then
       echo 
-      echo "${StartScript} already exists!"
+      echo "${ToggleScriptDir}${ToggleScript} already exists!"
     
     else
       scriptGen
     
-      if [ -f ${StartScript} ];then
-	chmod +x ${StartScript}
-	echo
+      if [ -f ${ToggleScriptDir}${ToggleScript} ];then
+	      chmod +x ${ToggleScriptDir}${ToggleScript}
+	      echo
 
 	if [ -f /usr/bin/notify-send ];then
-	  notify-send "Start/Stop script was created in: ${StartScript}"
-	  echo "Start/Stop script was created in: ${StartScript}"
+	  notify-send "Toggle script was created in: ${ToggleScriptDir}${ToggleScript}"
+	  echo "Toggle script was created in: ${ToggleScriptDir}${ToggleScript}"
 	else
-	  echo "Start/Stop script was created in: ${StartScript}"
+	  echo "Toggle script was created in: ${ToggleScriptDir}${ToggleScript}"
   fi
 	  
       
       else
 	echo
-	echo "Start/Stop script was not created!"
+	echo "Toggle script was not created!"
       fi
     fi
-  elif [ "${MakeStartScript}" = "disabled" ];then
-    echo "Generate Start Script: disabled"
+  elif [ "${MakeToggleScript}" = "disable" ];then
+    echo
+    echo "Toggle Script Creation: disabled"
       
    
   fi
@@ -330,7 +341,7 @@ chkBin(){
       ${destDir}btsync
       echo
       echo "done!"
-      chkGenScript
+      chkToggledir
       askOpen
       chkNotify
       

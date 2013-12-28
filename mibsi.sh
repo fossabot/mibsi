@@ -304,8 +304,14 @@ chkGenScript(){
       if [ -f ${StartScript} ];then
 	chmod +x ${StartScript}
 	echo
-	echo "Start/Stop script was created in: ${StartScript}"
-	notify-send "Start/Stop script was created in: ${StartScript}"
+
+	if [ -f /usr/bin/notify-send ];then
+	  notify-send "Start/Stop script was created in: ${StartScript}"
+	  echo "Start/Stop script was created in: ${StartScript}"
+	else
+	  echo "Start/Stop script was created in: ${StartScript}"
+  fi
+	  
       
       else
 	echo

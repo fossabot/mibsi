@@ -1,3 +1,8 @@
+# This file automatically generates a toggle file to
+# start/stop the main Bittorrent Sync daemon.
+
+# The 'MakeToggleScript' variable must be set to "enabled" in 'config.sh'
+
 scriptGen(){
 
   echo "#!/bin/bash" > ${ToggleScriptDir}${ToggleScript}

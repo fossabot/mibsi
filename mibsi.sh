@@ -1,11 +1,11 @@
 #!/bin/bash
- 
+
 #############################################################
 ## Title: Mibsi (Mindless Bittorrent Sync Installer)
 ## Description: Automatic Bittorrent Sync updater/installer
-## Version: 0.06a-1
+## Version: 0.06a-2
 ## License: ISC
-## Date: December 27, 2013
+## Date: December 04, 2014
 ## Author: Mollusk
 ## Email: hookahkitty@gmail.com
 ## Website: http://homebutter.com
@@ -13,160 +13,24 @@
 #############################################################
 
 
- 
- 
- 
-##### SETTINGS #####
 
-#installation directory (must include trailing slash)
-destDir="/home/${USER}/.btsync/"
+source config.sh
+source togglegen.sh
 
-#64 bit archive of btsync
-URL64="http://download-lb.utorrent.com/endpoint/btsync/os/linux-x64/track/stable"
-
-#32 bit archive of btsync
-URL32="http://download-lb.utorrent.com/endpoint/btsync/os/linux-i386/track/stable"
-
-#backup directory (must include trailing /)     
-BackupDir="/home/${USER}/.btsync/backup/"
-
-#name of final backup archive
-BackupFile="btsync-backup-$(date +%Y%m%d).tar.gz"
-
-#filename toggle script
-ToggleScript="btsync-toggle.sh"
-
-#path to create start/stop toggle script
-ToggleScriptDir="/home/${USER}/"
-
-#whether or not to generate a start/stop toggle script
-#possible values: "enable", "disable"
-MakeToggleScript="disable"
-
-#enable/eisable prompt to open btsync manager after installation
-#useful if you want to run Easy Btsync at boot time.
-#Possible values: "enable", "disable"
-AskPrompt="enable" 
-
-#enable/eisable graphical notification popup
-#Possible values: "enable", "disable"
-Notify="enable"
-  
-  
 ##############################################
 ## DONT CHANGE ANYTHING BELOW THIS MESSAGE  ##
 ## UNLESS YOU KNOW WHAT YOU ARE DOING!      ##
 ##############################################
 
-scriptGen(){
-
-echo "#!/bin/bash" > ${ToggleScriptDir}${ToggleScript}
 
 
-echo "btsync_bin="${destDir}"btsync" >> ${ToggleScriptDir}${ToggleScript}
-
-
-echo 'start_btsync(){
-  btsync_pid=$(pidof btsync)
-  
-  if [ ${btsync_pid} ];then
-    if [ -f /usr/bin/notify-send ];then
-      notify-send "BtSync is already running"
-      echo "BtSync is already running"
-    else
-      echo "BtSync is already running"
-    fi
-  
-  else
-    ${btsync_bin}
-    #sleep 4
-    btsync_pid=$(pidof btsync)
-    if [ ${btsync_pid} ];then
-      if [ -f /usr/bin/notify-send ];then
-        notify-send "BtSync was Started on PID: ${btsync_pid}"
-        echo "BtSync was Started on PID: ${btsync_pid}"
-      else
-        echo "BtSync was Started on PID: ${btsync_pid}"
-      fi
-      
-    else
-      if [ -f /usr/bin/notify-send ];then
-        notify-send "BtSync was not started"
-        echo "BtSync was not started"
-      else
-        echo "BtSync was not started"
-      fi
-    fi
-  fi
-
-}
-
-stop_btsync(){
-  btsync_pid=$(pidof btsync)
-  
-  
-  if [ ! ${btsync_pid} ];then
-    if [ -f /usr/bin/notify-send ];then
-      notify-send "BtSync is not running"
-      echo "BtSync is not running"
-    else
-      echo "BtSync is not running"
-    fi
-
-  else
-    kill -9 ${btsync_pid}
-    #sleep 4
-    btsync_pid=$(pidof btsync)
-    if [ ! ${btsync_pid} ];then
-      if [ -f /usr/bin/notify-send ];then
-        notify-send "BtSync was Killed"
-        echo "BtSync was killed"
-      else
-        echo "BtSync was killed"
-      fi
-    fi
-    
-    
-  fi
-
-}
-
-
-chkbin(){
-  btsync_pid=$(pidof btsync)
-  if [ -f ${btsync_bin} ];then
-    if [ ${btsync_pid} ];then
-      stop_btsync
-      
-    elif [ ! ${btsync_pid} ];then
-      start_btsync
-    fi
-    
-  elif [ ! -f ${btsync_bin} ];then
-    if [ -f /usr/bin/notify-send ];then
-      notify-send "${btsync_bin} does not exist so cannot start."
-      echo "${btsync_bin} does not exist so cannot start."
-    else
-      echo "${btsync_bin} does not exist so cannot start."
-    fi
-    
-  fi
-
-
-}
-
-
-chkbin' >> ${ToggleScriptDir}${ToggleScript}
-
-}
-
-checkArc(){    
+checkArc(){
     ARC=$(getconf LONG_BIT) #get the arcitecture of the machine
-    
+
     echo
     echo
     echo "Detecting system architecure..."
-    
+
     if [ ${ARC} = "64" ];then
       echo
       echo "Detected 64 bit architecture! (^-^)"
@@ -174,7 +38,7 @@ checkArc(){
       echo
       wget ${URL64} -P /tmp
       checkFile              #execute function which verifies downloaded file
-      
+
     elif [ ${ARC} = "32" ];then
       echo
       echo "Detected 32 bit architecture!"
@@ -182,7 +46,7 @@ checkArc(){
       echo
       wget ${URL32} -P /tmp
       checkFile
-      
+
     else
       echo "Could not detect machine architecture!"
       exit 0;
@@ -193,21 +57,21 @@ checkArc(){
 rmArchive(){
 
   echo
-    
-  
-    
+
+
+
   if [ -f /tmp/stable ];then #check if archive file exists
     echo -e "Removing /tmp/stable\n"
     rm /tmp/stable
   elif [ ! -f /tmp/stable ];then
     echo "The archive file: /tmp/stable was removed"
     echo
-      
+
   fi
 
 }
 checkFile(){
- 
+
   if [ -f /tmp/stable ];then  #check if downloaded file exists
     echo "Backing up .sync directory to: ${BackupDir}"
     echo
@@ -218,50 +82,50 @@ checkFile(){
       echo
     else
       echo "No .sync folder found"
-      
+
     fi
     echo
     echo -e "Extracting archive to: ${destDir}\n"
     tar xvf /tmp/stable -C ${destDir} #extract archive contents to destDir
     rmArchive
     checkPid #execute function which checks for process ID of btsync
-    
-    
-       
+
+
+
   elif [ ! -f /tmp/stable ];then #check if downloaded file does not exist
     echo "The file archive doesn't seem to exist"
     echo "Either you don't have correct permissions, the URL has an issue"
     echo "or there is no internet connection."
     checkPid
-    
-  
+
+
   else
     echo "Something went wrong!"
     exit 0;
-    
+
   fi
 }
 
 askOpen(){
   if [ "${AskPrompt}" = "enable" ];then
     echo "================================================================="
-    echo "NOTE: You can disable the prompt below in the script itself"
+    echo "TIP: You can disable the prompt below in the script itself"
     echo
     echo -n "Do you want to open the BtSync interface?(y/n): "
     read answer
-  
+
     if [ "${answer}" = "y" ];then
-    
+
       xdg-open http://localhost:8888 > /dev/null
-    
-    
+
+
     else
       echo
       echo "You can manage your secret keys by opening your web browser"
       echo "and entering: http://localhost:8888 into the address bar"
       echo
       exit 0;
-    
+
     fi
   elif [ "${AskPrompt}" = "disable" ];then
     echo
@@ -271,7 +135,7 @@ askOpen(){
     exit 0;
   else
     echo "Please set the variable 'AskOpen' to enable or disable"
-    
+
   fi
 
 }
@@ -280,15 +144,15 @@ KillBts(){
   btsync_pid=$(pidof btsync)
   PIDUID=$(awk '/^Uid:/{print $2}' /proc/${btsync_pid}/status)
   OUTPIDUID=$(getent passwd "${PIDUID}" | awk -F: '{print $1}')
-  
-  if [ "${OUTPIDUID}" != "${USER}" ];then 
+
+  if [ "${OUTPIDUID}" != "${USER}" ];then
     sudo /bin/kill -s KILL ${btsync_pid}
     echo "Process was killed by superuser"
-  
+
   else
     /bin/kill -s KILL ${btsync_pid}
     echo "Process was killed by user"
-  
+
   fi
 
 }
@@ -300,17 +164,17 @@ chkToggledir(){
     mkdir -p ${ToggleScriptDir}
     chkGenScript
   fi
-    
+
 }
 chkGenScript(){
   if [ "${MakeToggleScript}" = "enable" ];then
     if [ -f ${ToggleScriptDir}${ToggleScript} ];then
-      echo 
+      echo
       echo "${ToggleScriptDir}${ToggleScript} already exists!"
-    
+
     else
       scriptGen
-    
+
       if [ -f ${ToggleScriptDir}${ToggleScript} ];then
 	      chmod +x ${ToggleScriptDir}${ToggleScript}
 	      echo
@@ -321,8 +185,8 @@ chkGenScript(){
 	else
 	  echo "Toggle script was created in: ${ToggleScriptDir}${ToggleScript}"
   fi
-	  
-      
+
+
       else
 	echo
 	echo "Toggle script was not created!"
@@ -331,12 +195,12 @@ chkGenScript(){
   elif [ "${MakeToggleScript}" = "disable" ];then
     echo
     echo "Toggle Script Creation: disabled"
-      
-   
+
+
   fi
 }
 
-chkBin(){    
+chkBin(){
     if [ -f ${destDir}btsync ];then #check if binary exists
       ${destDir}btsync
       echo
@@ -344,12 +208,12 @@ chkBin(){
       chkToggledir
       askOpen
       chkNotify
-      
-    elif [ ! -f ${destDir}btsync ];then #check if binary does not exist 
+
+    elif [ ! -f ${destDir}btsync ];then #check if binary does not exist
       echo "${destDir}btsync does not seem to exist!"
       exit 0;
     fi
-    
+
 }
 
 
@@ -361,30 +225,30 @@ checkPid(){
   if [[ ${btsync_pid} ]];then #check if pid exists
     echo
     KillBts
-    echo  
+    echo
     echo "Waiting 4 seconds for process to kill.."
     echo "4";sleep 1;echo "3";sleep 1;echo "2";sleep 1;echo "1";sleep 1;
-      
+
     echo
     echo -e "Starting BtSync...\n"
     chkBin
-    
+
     elif [[ -z ${btsync_pid} ]];then #-z checks if string is empty (no pid)
     echo
     echo -e "Starting BtSync...\n"
     chkBin
-  fi 
-      
+  fi
+
 
 }
 
 bacKup(){
-  
+
   if [ -d ${BackupDir} ];then
     cd ${destDir}
     tar czvf ${BackupFile} .sync
     mv ${BackupFile} ${BackupDir}
-    
+
     if [ -f ${BackupDir}${BackupFile} ];then
       echo
       echo "Backup file created in: ${BackupDir}${BackupFile}"
@@ -392,19 +256,19 @@ bacKup(){
       echo
       echo "Could not create backup file in: ${BackupDir}"
     fi
-    
+
   elif [ ! -d ${BackupDir} ];then
     mkdir -p ${BackupDir}
     cd ${destDir}
     tar czvf ${BackupFile} .sync
     mv ${BackupFile} ${BackupDir}
-    
+
   else
     echo "Something went wrong creating ${BackupDir}"
-    
+
   fi
-    
-    
+
+
 
 
 }
@@ -414,14 +278,14 @@ if [ "${Notify}" = "enable" ];then
   if [ -f /usr/bin/notify-send ];then
   notify-send "BtSync has finished installing to: ${destDir}"
 
-  
+
   else
     exit 0;
   fi
-  
+
 elif [ "${Notify}" = "disable" ];then
   return;
-  
+
 else
   exit 0;
 fi
@@ -433,8 +297,8 @@ checkDir(){
   echo "|======================================|"
   echo "|                                      |"
   echo "|                Mibsi                 |"
-  echo "|               v0.06a-1               |"
-  echo "|         Released: 12/27/2013         |"
+  echo "|               v0.06a-2               |"
+  echo "|         Released: 12/04/2014         |"
   echo "|     http://mibsi.homebutter.com      |"
   echo "|                                      |"
   echo "|======================================|"
@@ -442,7 +306,7 @@ checkDir(){
 
   if [ -d ${destDir} ];then #verify if destDir exists
     checkArc
-               
+
   elif [ ! -d ${destDir} ];then #verify if destDir does not exist
      mkdir -p ${destDir}
    if [ -d ${destDir} ];then #check status of last run command (mkdir)
@@ -451,9 +315,9 @@ checkDir(){
        echo "Directory: ${destDir} could not be created!"
        exit 0;
    fi
-  
 
-     
+
+
  fi
 }
 

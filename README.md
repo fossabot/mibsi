@@ -1,24 +1,10 @@
-#Mibsi
+# Mibsi
 
 
-###A mindless btsync installer Bash script  
-  
-    
-Main Site: http://mibsi.homebutter.com
+### MIndless BtSync Installer  
 
-<hr>
-
-
-#Getting the latest stable release  
-To get the latest stable release, copy the following entire command into terminal:
-```bash
-wget http://mibsi.homebutter.com/downloads/latest/stable/mibsi-latest-stable.tar.gz && \
-tar xzvf mibsi-latest-stable.tar.gz && \
-cd mibsi && \
-chmod +x mibsi.sh && \
-./mibsi.sh
-```  
-#Features  
+# NOTICE: This project is no longer in development   
+# Features  
 - Automatically downloads and extracts the latest stable version of BtSync for your system arcitecture
 - Automatically creates a backup archive of your .sync folder to a defined directory
 - Ability to generate a start/stop toggle script for BtSync binary automatically
@@ -26,8 +12,9 @@ chmod +x mibsi.sh && \
 - Lets user define installation directories
 - Asks if user wishes to open BtSync web frontend
 
-#Default Settings
+# Default Settings  
 
+Located in: `mibsi.sh`  
 Installation Directory: /home/user/.btsync/  
 Backup Directory: /home/user/.btsync/backup/  
 Automatic toggle script creation: "disabled"  
